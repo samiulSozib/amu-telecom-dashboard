@@ -30,6 +30,7 @@ import { isRTL } from '../../utilities/rtlUtil';
 import { _fetchProviders } from '@/app/redux/actions/providerActions';
 import { _fetchSingleProvider } from '@/app/redux/actions/singleProviderAction';
 import { singleProviderReducer } from '../../../redux/reducers/singleProviderReducer';
+import BundleForm from '../../components/Form/BundleForm';
 
 const BundlePage = () => {
     let emptyBundle: Bundle = {
@@ -94,6 +95,8 @@ const BundlePage = () => {
 
     const [unsetDialogVisible, setUnsetDialogVisible] = useState(false);
     const [bundleToUnset, setBundleToUnset] = useState<Bundle | null>(null);
+    const [editingRows, setEditingRows] = useState({});
+
 
     useEffect(() => {
         dispatch(_fetchBundleList(1, searchTag));
@@ -148,6 +151,42 @@ const BundlePage = () => {
     const hideDeleteServicesDialog = () => {
         setDeleteServicesDialog(false);
         setBundle(emptyBundle);
+    };
+
+    const priceEditor = (options: any) => {
+
+        return (
+            <InputText
+                value={options.value}
+                onChange={(e) => options.editorCallback(e.target.value)}
+                className="w-full"
+            />
+        );
+    };
+
+
+
+    const onRowEditChange = (e: any) => {
+
+        setEditingRows(e.data);
+    };
+
+    const onCellEditComplete = (e: any) => {
+        const { newRowData
+            , index } = e;
+        //console.log(newRowData)
+
+        // Update the bundle with new price values
+        if (newRowData
+            .admin_buying_price !== bundles[index]?.admin_buying_price ||
+            newRowData
+                .buying_price !== bundles[index]?.buying_price ||
+            newRowData
+                .selling_price !== bundles[index]?.selling_price) {
+
+
+            dispatch(_editBundle(newRowData.id, newRowData, toast, t))
+        }
     };
 
     const saveService = () => {
@@ -372,7 +411,7 @@ const BundlePage = () => {
             <React.Fragment>
                 <div className="my-2" style={{ display: 'flex', gap: '0.5rem', position: 'relative' }}>
                     <div ref={filterRef} style={{ position: 'relative' }}>
-                        <Button style={{gap:'8px'}} label={t('ORDER.FILTER.FILTER')} icon="pi pi-filter" className="p-button-info" onClick={() => setFilterDialogVisible(!filterDialogVisible)} />
+                        <Button style={{ gap: '8px' }} label={t('ORDER.FILTER.FILTER')} icon="pi pi-filter" className="p-button-info" onClick={() => setFilterDialogVisible(!filterDialogVisible)} />
                         {filterDialogVisible && (
                             <div
                                 className="p-card p-fluid"
@@ -772,6 +811,8 @@ const BundlePage = () => {
                                 ? `${t('DATA_TABLE.TABLE.PAGINATOR.SHOWING')}` // localized RTL string
                                 : `${t('DATA_TABLE.TABLE.PAGINATOR.SHOWING')}`
                         }
+                        editMode="cell"
+
 
                     >
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
@@ -794,19 +835,32 @@ const BundlePage = () => {
                         ></Column>
                         <Column
                             style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
-                            field="Admin Buying"
+                            field="admin_buying_price"
                             header={t('BUNDLE.TABLE.COLUMN.ADMINBUYINGPRICE')}
                             body={adminBuyingPriceBodyTemplate}
                             headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}
+                            editor={(options) => priceEditor(options)}
+                            onCellEditComplete={onCellEditComplete}
                         ></Column>
-                        <Column style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }} field="Buying Price" header={t('BUNDLE.TABLE.COLUMN.BUYINGPRICE')} body={buyingPriceBodyTemplate} headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}></Column>
+
                         <Column
                             style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
-                            field="Selling Price"
+                            field="buying_price"
+                            header={t('BUNDLE.TABLE.COLUMN.BUYINGPRICE')}
+                            body={buyingPriceBodyTemplate}
+                            headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}
+                            editor={(options) => priceEditor(options)}
+                            onCellEditComplete={onCellEditComplete}
+                        ></Column>
+
+                        <Column
+                            style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
+                            field="selling_price"
                             header={t('BUNDLE.TABLE.COLUMN.SELLINGPRICE')}
                             body={sellingPriceBodyTemplate}
                             headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}
-
+                            editor={(options) => priceEditor(options)}
+                            onCellEditComplete={onCellEditComplete}
                         ></Column>
                         <Column style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }} field="Currency" header={t('BUNDLE.TABLE.COLUMN.CURRENCYNAME')} body={currencyBodyTemplate} headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}></Column>
                         <Column style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }} field="Service" header={t('BUNDLE.TABLE.FILTER.SERVICE')} body={serviceNameBodyTemplate} headerStyle={{ whiteSpace: 'nowrap', minWidth: '100px' }}></Column>
@@ -828,7 +882,22 @@ const BundlePage = () => {
                         totalRecords={pagination?.total}
                         onPageChange={(e) => onPageChange(e)}
                         template={
-                            isRTL() ? 'RowsPerPageDropdown CurrentPageReport LastPageLink NextPageLink PageLinks PrevPageLink FirstPageLink' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+                            isRTL() ? 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown' : 'FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown'
+                        }
+                        currentPageReportTemplate={
+                            isRTL()
+                                ? `${t('DATA_TABLE.TABLE.PAGINATOR.SHOWING')}` // localized RTL string
+                                : `${t('DATA_TABLE.TABLE.PAGINATOR.SHOWING')}`
+                        }
+                        firstPageLinkIcon={
+                            isRTL()
+                                ? "pi pi-angle-double-right"
+                                : "pi pi-angle-double-left"
+                        }
+                        lastPageLinkIcon={
+                            isRTL()
+                                ? "pi pi-angle-double-left"
+                                : "pi pi-angle-double-right"
                         }
                     />
 
@@ -1224,6 +1293,8 @@ const BundlePage = () => {
                             <div className="gridcol col">{bundle.api_provider_id && <Button label={t('UNSET_BUNDLE')} icon="pi pi-times" severity="danger" className={isRTL() ? 'rtl-button' : ''} onClick={() => confirmUnsetBundle(bundle)} />}</div>
                         </div>
                     </Dialog>
+
+
 
                     <Dialog visible={deleteServiceDialog} style={{ width: '450px' }} header={t('TABLE.GENERAL.CONFIRM')} modal footer={deleteCompanyDialogFooter} onHide={hideDeleteServiceDialog}>
                         <div className="flex align-items-center justify-content-center">
