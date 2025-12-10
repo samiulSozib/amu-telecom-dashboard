@@ -356,11 +356,20 @@ const TransactionPage = () => {
         );
     };
 
+    // const amountBodyTemplate = (rowData: MoneyTransaction) => {
+    //     return (
+    //         <>
+    //             <span className="p-column-title">Amount</span>
+    //             <span style={{ fontSize: '0.9rem' }}>{parseInt(rowData.amount).toFixed(2)}</span>
+    //         </>
+    //     );
+    // };
+
     const amountBodyTemplate = (rowData: MoneyTransaction) => {
         return (
             <>
                 <span className="p-column-title">Amount</span>
-                <span style={{ fontSize: '0.9rem' }}>{parseInt(rowData.amount).toFixed(2)}</span>
+                <span style={{ fontSize: '0.9rem' }}>{rowData.amount}</span>
             </>
         );
     };
