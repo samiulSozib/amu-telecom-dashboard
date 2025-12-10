@@ -586,7 +586,7 @@ const recharableAmountBodyTemplate = (rowData: MoneyTransaction) => {
                         <Column
                             style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
                             field="Bundle Title"
-                            header={t('RECHARGEABLE_AMOUNT')}
+                            header={t('RECHARGEABLE_ACCOUNT')}
                             body={recharableAmountBodyTemplate}
                         ></Column>
                         <Column
