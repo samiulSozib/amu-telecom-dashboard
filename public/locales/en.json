@@ -1622,7 +1622,10 @@
   
   "PLEASE_CONFIRM_UPDATE": "Please confirm the update",
   
-"RECHARGEABLE_ACCOUNT":"Rechargeable Account"
+"RECHARGEABLE_ACCOUNT":"Rechargeable Account",
+"TRANSACTION_STATUS":"Transaction Status",
+"TRANSACTION_HAS_NOT_BEEN_CREATED":"Transactions has not been created",
+"TRANSACTION_HAS_BEEN_CREATED":"Transactions has been created"
 
 
 }
