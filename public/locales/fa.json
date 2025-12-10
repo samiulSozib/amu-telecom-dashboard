@@ -1614,5 +1614,9 @@
     "CURRENT_SELLING_PRICE": "قیمت فروش فعلی",
     "PLEASE_ENTER_VALID_ADJUSTMENT_VALUE": "لطفاً یک مقدار معتبر برای تغییر وارد کنید",
     "PLEASE_ENTER_VALID_VALUE": "لطفاً یک مقدار معتبر وارد کنید",
-    "PLEASE_CONFIRM_UPDATE": "لطفاً به‌روزرسانی را تأیید کنید"
+    "PLEASE_CONFIRM_UPDATE": "لطفاً به‌روزرسانی را تأیید کنید",
+
+         "RECHARGEABLE_AMOUNT": "مبلغ قابل شارژ"
+
+
 }

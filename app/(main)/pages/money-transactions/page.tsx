@@ -392,14 +392,31 @@ const TransactionPage = () => {
         );
     };
 
-    const bundleTitleBodyTemplate = (rowData: MoneyTransaction) => {
-        return (
-            <>
-                <span className="p-column-title">Bundle Title</span>
-                <span style={{ fontSize: '0.9rem' }}>{'X'}</span>
-            </>
-        );
-    };
+const bundleTitleBodyTemplate = (rowData: MoneyTransaction) => {
+    const isStatusValid = rowData.order?.status === 1 || rowData.order?.status === "1";
+    
+    return (
+        <>
+            <span className="p-column-title">Bundle Title</span>
+            <span style={{ fontSize: '0.9rem' }}>
+                {isStatusValid ? rowData.order?.bundle?.bundle_title : "X"}
+            </span>
+        </>
+    );
+};
+
+const recharableAmountBodyTemplate = (rowData: MoneyTransaction) => {
+    const isStatusValid = rowData.order?.status === 1 || rowData.order?.status === "1";
+    
+    return (
+        <>
+            <span className="p-column-title">Rechargeable Amount</span>
+            <span style={{ fontSize: '0.9rem' }}>
+                {isStatusValid ? rowData.order?.rechargeble_account : "X"}
+            </span>
+        </>
+    );
+};
 
     const transactionDateBodyTemplate = (rowData: MoneyTransaction) => {
         const formatDate = (dateString: string) => {
@@ -557,12 +574,20 @@ const TransactionPage = () => {
                             field="Remaining Balance"
                             header={t('TRANSACTION.TABLE.COLUMN.REMAININGBALANCE')}
                             body={remainingBalanceBodyTemplate}
+                            
                         ></Column>
                         <Column
                             style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
                             field="Bundle Title"
                             header={t('TRANSACTION.TABLE.COLUMN.BUNDLETITLE')}
                             body={bundleTitleBodyTemplate}
+                        ></Column>
+
+                        <Column
+                            style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
+                            field="Bundle Title"
+                            header={t('RECHARGEABLE_AMOUNT')}
+                            body={recharableAmountBodyTemplate}
                         ></Column>
                         <Column
                             style={{ ...customCellStyle, textAlign: ['ar', 'fa', 'ps', 'bn'].includes(i18n.language) ? 'right' : 'left' }}
