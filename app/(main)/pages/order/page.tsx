@@ -782,7 +782,8 @@ const OrderPage = () => {
             orders,
             t,
             toast,
-            all: true
+            all: true,
+            filters:activeFilters
         });
     };
 
