@@ -69,17 +69,41 @@ export interface Bundle {
 }
 
 export interface ApiBinding {
-    product_type: string;
-    operator: string;
-    internet_type: string;
-    sim_type: string;
-    product_id: number | string;
-    table_id: number | string;
-    name: string;
-    days: number | string;
-    volume: number | string;
-    unit: string;
-    periodicity: string;
+    // product_type: string;
+    // operator: string;
+    // internet_type: string;
+    // sim_type: string;
+    // product_id: number | string;
+    // table_id: number | string;
+    // name: string;
+    // days: number | string;
+    // volume: number | string;
+    // unit: string;
+    // periodicity: string;
+    // Common properties (optional)
+    product_type?: string;
+    product_id?: number | string;
+    name?: string;
+    price?: number | string;
+    stock?: number;
+    description?: string;
+
+    // Non-MZR provider properties
+    operator?: string;
+    internet_type?: string;
+    sim_type?: string;
+    table_id?: number | string;
+    days?: number | string;
+    volume?: number | string;
+    unit?: string;
+    periodicity?: string;
+
+    // MZR provider properties
+    category_id?: number;
+    category_name?: string;
+
+    // Allow any additional properties for flexibility
+    [key: string]: any;
 }
 
 export interface PaginationLink {
@@ -287,20 +311,20 @@ export interface PaymentMethod {
     status: number;
     created_at: string;
     updated_at: string;
-    
+
     // New fields from migration (nullable)
     bank_name?: string | null;
     account_holder_name?: string | null;
     card_number?: string | null;
     account_number?: string | null;
     sheba_number?: string | null;
-    
-    
-    
+
+
+
     // New notes field from migration
     notes?: string | null;
-    
-   
+
+
 }
 
 export interface Supplier {
@@ -766,6 +790,8 @@ export interface AppSettings {
     afg_custom_recharge_selling_price_adjust_mode?: string,
     afg_custom_recharge_selling_price_adjust_value?: number,
     setaragan_admin_buying_price_percentage?: number,
+    custom_recharge_api_provider_id: number | null, // Add this line
+
 }
 
 
@@ -890,22 +916,26 @@ export interface RawInternet {
     amount_rial: number;
     gross_price_rial: number;
     internet_type: string;
-    meta?:Meta
+    meta?: Meta;
+    price?: number;
+    stock?: number;
+    description?: string;
+
 }
-export interface RawBundles{
-    
-    id:string;
-    title:string;
-    desc:string;
-    price:string;
-    tprice:string;
+export interface RawBundles {
+
+    id: string;
+    title: string;
+    desc: string;
+    price: string;
+    tprice: string;
 }
 
 export interface SingleProviderResponse {
     provider: SingleProvider;
     internets: Internet[];
     rawInternets: RawInternet[];
-    rawBundles:RawBundles[];
+    rawBundles: RawBundles[];
 }
 
 
@@ -952,99 +982,134 @@ export interface HawalaNumberSeries {
 
 
 export interface SupportContacts {
-  id: number;
-  title: string;
-  description: string;
-  phone: string;
-  is_whatsapp: boolean;
-  is_phone: boolean;
-  status: "active" | "inactive";
-  links: {
-    telegram: string;
-    website: string;
-  };
+    id: number;
+    title: string;
+    description: string;
+    phone: string;
+    is_whatsapp: boolean;
+    is_phone: boolean;
+    status: "active" | "inactive";
+    links: {
+        telegram: string;
+        website: string;
+    };
 }
 
 
-export interface Notification{
-    id:number;
-    title?:string;
-    message?:string;
-    reseller_id?:number;
-    status?:number|boolean;
-    target_type?:string|null;
-    media?:null|string|File;
-    created_at?:string|null;
-    is_read?:boolean
+export interface Notification {
+    id: number;
+    title?: string;
+    message?: string;
+    reseller_id?: number;
+    status?: number | boolean;
+    target_type?: string | null;
+    media?: null | string | File;
+    created_at?: string | null;
+    is_read?: boolean
 }
 
 export interface WithdrawalPolicy {
-  id: number;
-  currency_id: number;
-  commission_type: 'percentage' | 'fixed';
-  commission_value: number;
-  min_withdraw_amount: number;
-  max_withdraw_amount: number;
-  status: boolean;
-  currency?: Currency
+    id: number;
+    currency_id: number;
+    commission_type: 'percentage' | 'fixed';
+    commission_value: number;
+    min_withdraw_amount: number;
+    max_withdraw_amount: number;
+    status: boolean;
+    currency?: Currency
 }
 
 
 export interface WithdrawRequest {
-  id: number;
-  reseller_id: number;
-  currency_id: number;
-  amount: number;
-  net_amount:number;
-  commission_amount:number;
-  admin_note?: string;
-  status: number;
-  created_at: string;
-  updated_at: string;
-  reseller?: Reseller;
-  currency?: Currency;
-  bank_details?:{
-    bank_name?:string;
-    account_holder_name?:string;
-    account_number?:string;
-    iban?:string;
-    branch?:string;
-    swift_code?:string
-  }
+    id: number;
+    reseller_id: number;
+    currency_id: number;
+    amount: number;
+    net_amount: number;
+    commission_amount: number;
+    admin_note?: string;
+    status: number;
+    created_at: string;
+    updated_at: string;
+    reseller?: Reseller;
+    currency?: Currency;
+    bank_details?: {
+        bank_name?: string;
+        account_holder_name?: string;
+        account_number?: string;
+        iban?: string;
+        branch?: string;
+        swift_code?: string
+    }
 }
 
 export interface ApiInfoProvider {
-  id: number;
-  code: string;
-  name: string;
-  has_credentials: boolean;
+    id: number;
+    code: string;
+    name: string;
+    has_credentials: boolean;
 }
 
 export interface ApiInfoAccountInfo {
-  balance: number;
-  currency: string;
-  last_updated: string; // Format: "YYYY-MM-DD HH:mm:ss"
+    balance: number;
+    currency: string;
+    last_updated: string; // Format: "YYYY-MM-DD HH:mm:ss"
 }
 
 export interface ApiInfoUser {
-  uid: string;
-  name: string;
-  balance: number;
-  lang: string;
+    uid: string;
+    name: string;
+    balance: number;
+    lang: string;
 }
 
 export interface ApiInfoTransaction {
-  id: number;
-  phone: string;
-  created_at: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.sssZ"
-  finalAmount: number;
-  type: string; // Could be more specific like 'recharge' | 'balance' | etc.
-  b_name: string;
+    id: number;
+    phone: string;
+    created_at: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.sssZ"
+    finalAmount: number;
+    type: string; // Could be more specific like 'recharge' | 'balance' | etc.
+    b_name: string;
 }
 
 export interface AccountData {
-  provider: ApiInfoProvider;
-  account_info: ApiInfoAccountInfo;
-  user: ApiInfoUser;
-  recent_transactions: ApiInfoTransaction[];
+    provider: ApiInfoProvider;
+    account_info: ApiInfoAccountInfo;
+    user: ApiInfoUser;
+    recent_transactions: ApiInfoTransaction[];
+}
+
+export interface ApiKey {
+    id: number;
+    key: string;
+    name: string;
+    is_active: boolean;
+    expires_at: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.000000Z"
+    last_used_at: string | null; // ISO format or null if never used
+    allowed_ips: string[];
+    rate_limit: number;
+    created_at: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.000000Z"
+    updated_at: string; // ISO format: "YYYY-MM-DDTHH:mm:ss.000000Z"
+    reseller: Reseller | null;
+}
+
+
+// interfaces/providerProductsInterface.ts
+export interface Category {
+    id: number;
+    name: string;
+    icon: string | null;
+    product_count: number;
+    is_auto: boolean;
+    purchase_type: 'voucher' | 'recharge';
+}
+
+export interface Product {
+    id: number;
+    name: string;
+    description: string;
+    category_id: number;
+    category_title: string;
+    price: number;
+    stock: number;
 }
